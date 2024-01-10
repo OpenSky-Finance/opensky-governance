@@ -7,7 +7,7 @@ module.exports = async ({getNamedAccounts, deployments, network}) => {
   await deploy('OSKYToken', {
     from: deployer,
     args: [
-      totalSupply
+      totalSupply, deployer
     ],
     log: true,
   });

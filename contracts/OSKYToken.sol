@@ -22,11 +22,12 @@ contract OSKYToken is ERC20, ERC20Permit, ERC20Votes, Ownable {
      * @param supply The number of tokens to issue to the contract deployer.
      */
     constructor(
-        uint256 supply)
+        uint256 supply,
+        address initialOwner)
         ERC20("OpenSky Token", "OSKY")
         ERC20Permit("OpenSky Token")
     {
-        _mint(msg.sender, supply);
+        _mint(initialOwner, supply);
         nextMint = block.timestamp + minimumMintInterval;
     }
 
