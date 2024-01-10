@@ -6,3 +6,4 @@ deployments/tenderly
 airdrops/tenderly
 api/airdrop.json
 .idea
+.env

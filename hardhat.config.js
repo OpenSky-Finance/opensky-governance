@@ -1,6 +1,4 @@
-const { task } = require('hardhat/config');
 const config = require('./config');
-const { ShardedMerkleTree } = require('./src/merkle');
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -20,47 +18,6 @@ if(process.env.DEPLOYER_KEY) {
   real_accounts = [process.env.DEPLOYER_KEY];
 }
 
-task("maketree", "Generates a merkle airdrop tree")
-  .addParam("file", "File to read airdrop data from")
-  .addOptionalParam("name", "Output filename for the airdrop", undefined)
-  .addOptionalParam("shardnybbles", "Number of nybbles to use for sharding", 2, types.int)
-  .setAction(async ({ file, name, shardnybbles }) => {
-    if(name === undefined) {
-      name = hre.network.name;
-    }
-    let airdrops;
-    if(hre.network.tags.test) {
-      shardnybbles = 1;
-      const signers = await ethers.getSigners();
-      airdrops = signers.slice(0, 20).map((signer, index) => [
-        signer.address,
-        {
-          past_tokens: '625000000000000000000000',
-          future_tokens: '625000000000000000000000',
-          longest_owned_name: '0x04f740db81dc36c853ab4205bddd785f46e79ccedca351fc6dfcbd8cc9a33dd6', // keccak256('test')
-          last_expiring_name: '0x04f740db81dc36c853ab4205bddd785f46e79ccedca351fc6dfcbd8cc9a33dd6',
-          balance: '1250000000000000000000000',
-          has_reverse_record: index % 2 == 0,
-        }
-      ]);
-    } else {
-      const fs = require('fs');
-      airdrops = fs.readFileSync(file, {encoding: 'utf-8'}).split('\n').filter((x) => x.length > 0).map((line) => {
-        const data = JSON.parse(line);
-        const owner = data.owner;
-        delete data.owner;
-        data.balance = ethers.BigNumber.from(data.past_tokens.toString().split('.')[0]).add(ethers.BigNumber.from(data.future_tokens.toString().split('.')[0])).toString();
-        return [owner, data];
-      });
-    }
-    ShardedMerkleTree.build(
-      airdrops,
-      shardnybbles,
-      `airdrops/${name}`
-    );
-  }
-);
-
 module.exports = {
   solidity: "0.8.7",
   namedAccounts: {
@@ -74,13 +31,13 @@ module.exports = {
       tags: ["test"],
     },
     mainnet: {
-      url: "http://localhost:8545/",
+      url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_MAINNET_KEY}`,
       chainId: 1,
       accounts: real_accounts,
       maxPriorityFeePerGas: 1000000000
     },
     tenderly: {
-      url: "https://rpc.tenderly.co/fork/bd704e15-7f2c-4f12-8c1a-9bedf536c336"
+      url: ""
     }
   },
 };
