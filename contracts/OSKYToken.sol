@@ -23,11 +23,11 @@ contract OSKYToken is ERC20, ERC20Permit, ERC20Votes, Ownable {
      */
     constructor(
         uint256 supply,
-        address initialOwner)
+        address receiver)
         ERC20("OpenSky Token", "OSKY")
         ERC20Permit("OpenSky Token")
     {
-        _mint(initialOwner, supply);
+        _mint(receiver, supply);
         nextMint = block.timestamp + minimumMintInterval;
     }
 
