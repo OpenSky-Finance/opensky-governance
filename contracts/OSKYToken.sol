@@ -19,7 +19,8 @@ contract OSKYToken is ERC20, ERC20Permit, ERC20Votes, Ownable {
 
     /**
      * @dev Constructor.
-     * @param supply The number of tokens to issue to the contract deployer.
+     * @param supply The number of tokens to issue to the receiver.
+     * @param receiver The address to receive token.
      */
     constructor(
         uint256 supply,
